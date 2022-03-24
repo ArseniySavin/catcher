@@ -1,8 +1,8 @@
-package catcher
+package pkg
 
 import (
+	"github.com/ArseniySavin/catcher/pkg/internal"
 	"fmt"
-	"github.com/ArseniySavin/catcher/pkg/catcher/internal"
 	"log"
 )
 

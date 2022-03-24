@@ -1,4 +1,4 @@
-package catcher
+package pkg
 
 import (
 	"fmt"
