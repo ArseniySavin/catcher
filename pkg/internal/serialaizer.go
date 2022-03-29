@@ -7,6 +7,7 @@ import (
 type LogMsg struct {
 	Level   string
 	Host    string
+	Message string
 	Payload string
 }
 

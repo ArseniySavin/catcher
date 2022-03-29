@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"fmt"
 	"os"
 	"path"
 	"runtime"
@@ -16,12 +17,17 @@ type CallerInfo struct {
 }
 
 func GetHost() string {
-	host, _ := os.Hostname()
+	host, err := os.Hostname()
+
+	if err != nil {
+		host = fmt.Sprintf("Host undefined, %s", err.Error())
+	}
+
 	return host
 }
 
 func CallInfo(caller int) *CallerInfo {
-	host, _ := os.Hostname()
+	host := GetHost()
 	pc, file, line, _ := runtime.Caller(caller)
 	_, fileName := path.Split(file)
 	parts := strings.Split(runtime.FuncForPC(pc).Name(), ".")

@@ -1,8 +1,8 @@
 package pkg
 
 import (
-	"github.com/ArseniySavin/catcher/pkg/internal"
 	"fmt"
+	"github.com/ArseniySavin/catcher/pkg/internal"
 	"log"
 )
 
@@ -24,6 +24,7 @@ func LogInfo(msg string) {
 	log.Println(internal.Marshal(&internal.LogMsg{
 		Level:   "INFO",
 		Host:    internal.GetHost(),
+		Message: msg,
 		Payload: msg,
 	}))
 }
@@ -44,6 +45,7 @@ func LogTrace(msg string, spot interface{}) {
 		log.Println(internal.Marshal(&internal.LogMsg{
 			Level:   "TRACE",
 			Host:    internal.GetHost(),
+			Message: msg,
 			Payload: msg + ", " + spotMsg,
 		}))
 	}
@@ -51,19 +53,23 @@ func LogTrace(msg string, spot interface{}) {
 
 // LogFatal stop app use os.Exit(1)
 func LogFatal(err error) {
+	errStr := err.Error()
 	log.Fatalln(internal.Marshal(&internal.LogMsg{
 		Level:   "FATAL",
 		Host:    internal.GetHost(),
-		Payload: err.Error(),
+		Message: errStr,
+		Payload: errStr,
 	}))
 }
 
 // LogError print error with call data
 func LogError(err error) {
+	errStr := err.Error()
 	call := internal.CallInfo(2)
 	log.Println(internal.Marshal(&internal.LogMsg{
 		Level:   "ERROR",
 		Host:    internal.GetHost(),
-		Payload: err.Error() + ", " + internal.MarshalStruct(call),
+		Message: errStr,
+		Payload: errStr + ", " + internal.MarshalStruct(call),
 	}))
 }
