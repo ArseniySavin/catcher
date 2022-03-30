@@ -48,7 +48,12 @@ func Test_Error_Simple(t *testing.T) {
 	LogError(errors.New("Simple error"))
 }
 
-//func Test_Fatal(t *testing.T) {
+//func Test_Fatal_Error_Simple(t *testing.T) {
 //	Mode = Tracing
 //	LogFatal(errors.New("Simple error"))
+//}
+//
+//func Test_Fatal_Error_Custom(t *testing.T) {
+//	Mode = Tracing
+//	LogFatal(BaseError.NewCode("-1").Throw("Fatal custom error!"))
 //}

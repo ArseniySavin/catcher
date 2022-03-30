@@ -54,24 +54,18 @@ func LogTrace(msg string, spot interface{}) {
 
 // LogFatal stop app use os.Exit(1)
 func LogFatal(err error) {
-	errStr := err.Error()
+	errStr := cast(err)
 	log.Fatalln(internal.Marshal(&internal.LogMsg{
 		Level:   "FATAL",
 		Host:    internal.GetHost(),
-		Message: errStr,
+		Message: err.Error(),
 		Payload: errStr,
 	}))
 }
 
 // LogError print error with call data
 func LogError(err error) {
-	errStr := err.Error()
-
-	if errors.Is(err, BaseError) {
-		baseErr := BaseError
-		errors.As(err, &baseErr)
-		errStr = fmt.Sprintf("%s %s", baseErr.Error(), baseErr.Stack())
-	}
+	errStr := cast(err)
 
 	call := internal.CallInfo(2)
 	log.Println(internal.Marshal(&internal.LogMsg{
@@ -80,4 +74,13 @@ func LogError(err error) {
 		Message: err.Error(),
 		Payload: errStr + ", " + internal.MarshalStruct(call),
 	}))
+}
+
+func cast(err error) string {
+	if errors.Is(err, BaseError) {
+		baseErr := BaseError
+		errors.As(err, &baseErr)
+		return fmt.Sprintf("%s %s", baseErr.Error(), baseErr.Stack())
+	}
+	return err.Error()
 }
