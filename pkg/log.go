@@ -1,6 +1,7 @@
 package pkg
 
 import (
+	"errors"
 	"fmt"
 	"github.com/ArseniySavin/catcher/pkg/internal"
 	"log"
@@ -65,11 +66,18 @@ func LogFatal(err error) {
 // LogError print error with call data
 func LogError(err error) {
 	errStr := err.Error()
+
+	if errors.Is(err, BaseError) {
+		baseErr := BaseError
+		errors.As(err, &baseErr)
+		errStr = fmt.Sprintf("%s %s", baseErr.Error(), baseErr.Stack())
+	}
+
 	call := internal.CallInfo(2)
 	log.Println(internal.Marshal(&internal.LogMsg{
 		Level:   "ERROR",
 		Host:    internal.GetHost(),
-		Message: errStr,
+		Message: err.Error(),
 		Payload: errStr + ", " + internal.MarshalStruct(call),
 	}))
 }
