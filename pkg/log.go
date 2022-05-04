@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/ArseniySavin/catcher/pkg/internal"
 	"log"
+	"os"
 )
 
 type mode bool
@@ -12,6 +13,7 @@ type mode bool
 // Global
 var (
 	Mode mode = Regular
+	l         = log.New(os.Stderr, "", log.LstdFlags)
 )
 
 // Global
@@ -22,7 +24,7 @@ const (
 
 // LogInfo for positive events
 func LogInfo(msg string) {
-	log.Println(internal.Marshal(&internal.LogMsg{
+	l.Println(internal.Marshal(&internal.LogMsg{
 		Level:   "INFO",
 		Host:    internal.GetHost(),
 		Message: msg,
@@ -43,7 +45,7 @@ func LogTrace(msg string, spot interface{}) {
 			spotMsg = fmt.Sprintf("%s", spot)
 		}
 
-		log.Println(internal.Marshal(&internal.LogMsg{
+		l.Println(internal.Marshal(&internal.LogMsg{
 			Level:   "TRACE",
 			Host:    internal.GetHost(),
 			Message: msg,
@@ -55,7 +57,7 @@ func LogTrace(msg string, spot interface{}) {
 // LogFatal stop app use os.Exit(1)
 func LogFatal(err error) {
 	errStr := cast(err)
-	log.Fatalln(internal.Marshal(&internal.LogMsg{
+	l.Fatalln(internal.Marshal(&internal.LogMsg{
 		Level:   "FATAL",
 		Host:    internal.GetHost(),
 		Message: err.Error(),
@@ -68,7 +70,7 @@ func LogError(err error) {
 	errStr := cast(err)
 
 	call := internal.CallInfo(2)
-	log.Println(internal.Marshal(&internal.LogMsg{
+	l.Println(internal.Marshal(&internal.LogMsg{
 		Level:   "ERROR",
 		Host:    internal.GetHost(),
 		Message: err.Error(),
