@@ -3,9 +3,10 @@ package pkg
 import (
 	"errors"
 	"fmt"
-	"github.com/ArseniySavin/catcher/pkg/internal"
 	"log"
 	"os"
+
+	"github.com/ArseniySavin/catcher/pkg/internal"
 )
 
 type mode bool
@@ -21,6 +22,16 @@ const (
 	Tracing mode = true
 	Regular mode = false
 )
+
+// Log with log level
+func Log(level, msg string) {
+	l.Println(internal.Marshal(&internal.LogMsg{
+		Level:   level,
+		Host:    internal.GetHost(),
+		Message: msg,
+		Payload: msg,
+	}))
+}
 
 // LogInfo for positive events
 func LogInfo(msg string) {
