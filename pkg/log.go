@@ -65,6 +65,18 @@ func LogTrace(msg string, spot interface{}) {
 	}
 }
 
+// LogRequest for log execution time
+func LogRequest(exec_msg string, req_detail string) {
+	if Mode {
+		l.Println(internal.Marshal(&internal.LogMsg{
+			Level:   "REQUEST",
+			Host:    internal.GetHost(),
+			Message: exec_msg,
+			Payload: exec_msg + ", " + req_detail,
+		}))
+	}
+}
+
 // LogFatal stop app use os.Exit(1)
 func LogFatal(err error) {
 	errStr := cast(err)
