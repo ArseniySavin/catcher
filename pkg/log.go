@@ -29,7 +29,7 @@ func Log(level, msg string) {
 		Level:   level,
 		Host:    internal.GetHost(),
 		Message: msg,
-		Payload: msg,
+		// Payload: msg,
 	}))
 }
 
@@ -39,7 +39,7 @@ func LogInfo(msg string) {
 		Level:   "INFO",
 		Host:    internal.GetHost(),
 		Message: msg,
-		Payload: msg,
+		// Payload: msg,
 	}))
 }
 
@@ -60,7 +60,7 @@ func LogTrace(msg string, spot interface{}) {
 			Level:   "TRACE",
 			Host:    internal.GetHost(),
 			Message: msg,
-			Payload: msg + ", " + spotMsg,
+			Payload: append([]string{}, fmt.Sprintf("Spot:%s", spotMsg)),
 		}))
 	}
 }
@@ -72,7 +72,7 @@ func LogRequest(exec_msg string, req_detail string) {
 			Level:   "REQUEST",
 			Host:    internal.GetHost(),
 			Message: exec_msg,
-			Payload: exec_msg + ", " + req_detail,
+			Payload: append([]string{}, fmt.Sprintf("Spot:%s", req_detail)),
 		}))
 	}
 }
@@ -84,7 +84,7 @@ func LogFatal(err error) {
 		Level:   "FATAL",
 		Host:    internal.GetHost(),
 		Message: err.Error(),
-		Payload: errStr,
+		Payload: append([]string{}, fmt.Sprintf("Error:%s", errStr)),
 	}))
 }
 
@@ -97,7 +97,7 @@ func LogError(err error) {
 		Level:   "ERROR",
 		Host:    internal.GetHost(),
 		Message: err.Error(),
-		Payload: errStr + ", " + internal.MarshalStruct(call),
+		Payload: append([]string{}, fmt.Sprintf("Error:%s", errStr), fmt.Sprintf("Source:%s", internal.MarshalStruct(call))),
 	}))
 }
 

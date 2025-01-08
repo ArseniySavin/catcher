@@ -17,10 +17,16 @@ type CallerInfo struct {
 }
 
 func GetHost() string {
-	host, err := os.Hostname()
+	host := os.Getenv("HOST")
 
-	if err != nil {
-		host = fmt.Sprintf("Host undefined, %s", err.Error())
+	if host == "" {
+		host, err := os.Hostname()
+
+		if err != nil {
+			return fmt.Sprintf("Host undefined, %s", err.Error())
+		}
+
+		return host
 	}
 
 	return host
@@ -29,6 +35,7 @@ func GetHost() string {
 func CallInfo(caller int) *CallerInfo {
 	host := GetHost()
 	pc, file, line, _ := runtime.Caller(caller)
+
 	_, fileName := path.Split(file)
 	parts := strings.Split(runtime.FuncForPC(pc).Name(), ".")
 	pl := len(parts)
@@ -52,5 +59,29 @@ func CallInfo(caller int) *CallerInfo {
 		FuncName:    funcName,
 		Line:        line,
 		Host:        host,
+	}
+}
+
+func (c CallerInfo) String() string {
+	return fmt.Sprintf("%s/%s %s:%d", c.PackageName, c.FileName, c.FuncName, c.Line)
+}
+
+func CallSource(PC uintptr) *CallerInfo {
+	fs := runtime.CallersFrames([]uintptr{PC})
+	f, _ := fs.Next()
+
+	_, fileName := path.Split(f.File)
+
+	fName := runtime.FuncForPC(PC).Name()
+	index := strings.LastIndex(fName, ".")
+	packageName := fName[0:index]
+	funcName := fName[index:]
+
+	return &CallerInfo{
+		Host:        GetHost(),
+		PackageName: packageName,
+		FileName:    fileName,
+		FuncName:    funcName,
+		Line:        f.Line,
 	}
 }

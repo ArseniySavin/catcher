@@ -48,12 +48,9 @@ func Test_Error_Simple(t *testing.T) {
 	LogError(errors.New("Simple error"))
 }
 
-//func Test_Fatal_Error_Simple(t *testing.T) {
-//	Mode = Tracing
-//	LogFatal(errors.New("Simple error"))
-//}
-//
-//func Test_Fatal_Error_Custom(t *testing.T) {
-//	Mode = Tracing
-//	LogFatal(BaseError.NewCode("-1").Throw("Fatal custom error!"))
-//}
+func Benchmark_log_handler(b *testing.B) {
+	Mode = Tracing
+	LogError(BaseError.NewCode("500").Throw("Example error"))
+
+	b.ReportAllocs()
+}

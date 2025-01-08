@@ -8,7 +8,7 @@ type LogMsg struct {
 	Level   string
 	Host    string
 	Message string
-	Payload string
+	Payload []string
 }
 
 func Marshal(logMsg *LogMsg) string {
