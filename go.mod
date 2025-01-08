@@ -1,3 +1,3 @@
 module github.com/ArseniySavin/catcher
 
-go 1.18
+go 1.21
