@@ -37,6 +37,20 @@ func NewCatcherHandler(opts *slog.HandlerOptions) slog.Handler {
 		mu:  &sync.Mutex{}}
 }
 
+// Level - Represent info (default) | debug | warning | error
+func Level(level string) slog.Level {
+	switch level {
+	case "debug":
+		return slog.LevelDebug
+	case "warning":
+		return slog.LevelWarn
+	case "error":
+		return slog.LevelError
+	default:
+		return slog.LevelInfo
+	}
+}
+
 func (h *CatcherHandler) Enabled(_ context.Context, level slog.Level) bool {
 	return level >= h.opt.Level.Level()
 }
