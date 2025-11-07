@@ -1,10 +1,10 @@
 package internal
 
 import (
-	"fmt"
 	"os"
 	"path"
 	"runtime"
+	"strconv"
 	"strings"
 )
 
@@ -23,7 +23,7 @@ func GetHost() string {
 		host, err := os.Hostname()
 
 		if err != nil {
-			return fmt.Sprintf("Host undefined, %s", err.Error())
+			return "undefined"
 		}
 
 		return host
@@ -63,25 +63,22 @@ func CallInfo(caller int) *CallerInfo {
 }
 
 func (c CallerInfo) String() string {
-	return fmt.Sprintf("%s/%s %s:%d", c.PackageName, c.FileName, c.FuncName, c.Line)
+	return (c.PackageName + "/" + c.FileName + " " + c.FuncName + ":" + strconv.Itoa(c.Line))
 }
 
-func CallSource(PC uintptr) *CallerInfo {
+func CallSource(PC uintptr, host string) CallerInfo {
 	fs := runtime.CallersFrames([]uintptr{PC})
 	f, _ := fs.Next()
 
-	_, fileName := path.Split(f.File)
-
+	fFile := strings.LastIndex(f.File, "/")
 	fName := runtime.FuncForPC(PC).Name()
 	index := strings.LastIndex(fName, ".")
-	packageName := fName[0:index]
-	funcName := fName[index:]
 
-	return &CallerInfo{
-		Host:        GetHost(),
-		PackageName: packageName,
-		FileName:    fileName,
-		FuncName:    funcName,
+	return CallerInfo{
+		Host:        host,
+		PackageName: fName[0:index],
+		FileName:    f.File[fFile+1:],
+		FuncName:    fName[index:],
 		Line:        f.Line,
 	}
 }

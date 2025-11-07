@@ -2,6 +2,7 @@ package pkg
 
 import (
 	"fmt"
+
 	"github.com/ArseniySavin/catcher/pkg/internal"
 )
 
@@ -40,7 +41,7 @@ func (e *Error) NewCode(code string) *Error {
 
 func (e *Error) Throw(msg string) *Error {
 	e.Msg = msg
-	e.Stk = internal.MarshalStruct(internal.CallInfo(2))
+	e.Stk = string(internal.MarshalStruct(internal.CallInfo(2)))
 	return e
 
 }

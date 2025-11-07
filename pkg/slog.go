@@ -6,7 +6,6 @@ package pkg
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"log/slog"
 	"os"
@@ -25,6 +24,7 @@ type CatcherHandler struct {
 	mu    *sync.Mutex
 	attr  []slog.Attr
 	group string
+	host  string
 }
 
 func NewCatcherHandler(opts *slog.HandlerOptions) slog.Handler {
@@ -32,9 +32,11 @@ func NewCatcherHandler(opts *slog.HandlerOptions) slog.Handler {
 		opts = &slog.HandlerOptions{Level: slog.LevelInfo}
 	}
 	return &CatcherHandler{
-		opt: opts,
-		l:   log.New(os.Stderr, "", log.LstdFlags),
-		mu:  &sync.Mutex{}}
+		opt:  opts,
+		l:    log.New(os.Stderr, "", log.LstdFlags),
+		mu:   &sync.Mutex{},
+		host: internal.GetHost(),
+	}
 }
 
 // Level - Represent info (default) | debug | warning | error
@@ -75,11 +77,11 @@ func (h *CatcherHandler) Handle(_ context.Context, r slog.Record) error {
 	h.mu.Lock()
 	defer h.mu.Unlock()
 	if h.opt.AddSource {
-		msg.Payload = append(msg.Payload, fmt.Sprintf("Source:%s", internal.CallSource(r.PC).String()))
+		msg.Payload = append(msg.Payload, "Source:"+internal.CallSource(r.PC, h.host).String())
 	}
 
 	if !h.opt.AddSource && r.Level == slog.LevelError {
-		msg.Payload = append(msg.Payload, fmt.Sprintf("Source:%s", internal.CallSource(r.PC).String()))
+		msg.Payload = append(msg.Payload, "Source:"+internal.CallSource(r.PC, h.host).String())
 	}
 
 	msg = attr(msg, h.attr, h.group)
@@ -94,10 +96,10 @@ func payload(payload internal.LogMsg, r slog.Record, group string) internal.LogM
 	if r.NumAttrs() > 0 {
 		r.Attrs(func(attr slog.Attr) bool {
 			if group != "" {
-				payload.Payload = append(payload.Payload, fmt.Sprintf("%s.%s:%s", group, attr.Key, attr.Value.String()))
+				payload.Payload = append(payload.Payload, group+"."+attr.Key+":"+attr.Value.String())
 				return true
 			}
-			payload.Payload = append(payload.Payload, fmt.Sprintf("%s:%s", attr.Key, attr.Value.String()))
+			payload.Payload = append(payload.Payload, attr.Key+":"+attr.Value.String())
 			return true
 		})
 	}
@@ -108,10 +110,10 @@ func attr(payload internal.LogMsg, attr []slog.Attr, group string) internal.LogM
 	if len(attr) > 0 {
 		for _, v := range attr {
 			if group != "" {
-				payload.Payload = append(payload.Payload, fmt.Sprintf("%s.%s:%s", group, v.Key, v.Value.String()))
+				payload.Payload = append(payload.Payload, group+"."+v.Key+":"+v.Value.String())
 				continue
 			}
-			payload.Payload = append(payload.Payload, fmt.Sprintf("%s:%s", v.Key, v.Value.String()))
+			payload.Payload = append(payload.Payload, v.Key+":"+v.Value.String())
 		}
 	}
 	return payload

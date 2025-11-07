@@ -49,7 +49,7 @@ func LogTrace(msg string, spot interface{}) {
 		spotMsg := ""
 		switch spot.(type) {
 		case interface{}:
-			spotMsg = internal.MarshalStruct(spot)
+			spotMsg = string(internal.MarshalStruct(spot))
 		case int:
 			spotMsg = fmt.Sprintf("%+d", spot)
 		default:
