@@ -16,7 +16,7 @@ func Marshal(logMsg *LogMsg) string {
 	return string(msg)
 }
 
-func MarshalStruct(v interface{}) string {
+func MarshalStruct(v interface{}) []byte {
 	msg, _ := json.Marshal(v)
-	return string(msg)
+	return msg
 }
